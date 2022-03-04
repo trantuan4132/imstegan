@@ -6,7 +6,7 @@ class LSB():
         self.delimiter = delimiter
         self.key = key
 
-    def embed_image(self, image, message):
+    def embed(self, image, message):
         message = message + self.delimiter
         binary_message = message_to_binary(message)
         h, w, c = image.shape
