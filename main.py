@@ -2,7 +2,7 @@ import argparse
 import matplotlib.pyplot as plt
 import cv2
 
-import steganography
+import imgstegan
 
 def parse_args():
     parser = argparse.ArgumentParser(description='LSB embedding and extraction')
@@ -17,15 +17,16 @@ def parse_args():
 def main():
     args = parse_args()
     image = cv2.imread(args.image_path)
-    algorithm = getattr(steganography, args.algorithm_name)
+    algorithm = getattr(imgstegan, args.algorithm_name)
     key = args.key
+    message = args.message
     extract = args.extract
 
     if extract:
         message = algorithm(key=key).extract(image)
         print(message)
     else:
-        image = algorithm(key=key).embed_image(image, message)
+        image = algorithm(key=key).embed(image, message)
         cv2.imwrite(args.output_path, image)
         plt.imshow(image[:, :, ::-1])
         plt.show()
