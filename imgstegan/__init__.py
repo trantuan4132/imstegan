@@ -1,1 +1,1 @@
-from .LSB import *
+from .algo import *

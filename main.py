@@ -21,6 +21,7 @@ def main():
     message = args.message
     algorithm = getattr(imgstegan, args.algorithm_name)
     key = args.key
+    message = args.message
     extract = args.extract
 
     if extract:
