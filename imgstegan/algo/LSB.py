@@ -1,20 +1,21 @@
 import numpy as np
-from utils import *
+
+from ..utils import *
+
 
 class LSB():
     def __init__(self, delimiter="#####", key=2022):
         self.delimiter = delimiter
         self.key = key
 
-    def embed_image(self, image, message):
+    def embed(self, image, message):
         message = message + self.delimiter
         binary_message = message_to_binary(message)
         h, w, c = image.shape
         max_bits = h * w * c
-
         # Check if message length exceeds maximum bits for encoding
         if len(binary_message) > max_bits:
-            raise ValueError("Encountered insufficient places to store data, need bigger image or less data !!")
+            raise ValueError("Insufficient places to store data, need bigger image or less data !!")
 
         # Create path for embedding data using key value
         path = np.arange(max_bits)

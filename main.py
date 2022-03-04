@@ -1,8 +1,8 @@
 import argparse
-from skimage import io
 import matplotlib.pyplot as plt
+import cv2
 
-import algorithms
+import imgstegan
 
 def parse_args():
     parser = argparse.ArgumentParser(description='LSB embedding and extraction')
@@ -16,19 +16,19 @@ def parse_args():
 
 def main():
     args = parse_args()
-    image = io.imread(args.image_path)
-    message = args.message
-    algorithm = getattr(algorithms, args.algorithm_name)
+    image = cv2.imread(args.image_path)
+    algorithm = getattr(imgstegan, args.algorithm_name)
     key = args.key
+    message = args.message
     extract = args.extract
 
     if extract:
         message = algorithm(key=key).extract(image)
         print(message)
     else:
-        image = algorithm(key=key).embed_image(image, message)
-        io.imsave(args.output_path, image)
-        plt.imshow(image)
+        image = algorithm(key=key).embed(image, message)
+        cv2.imwrite(args.output_path, image)
+        plt.imshow(image[:, :, ::-1])
         plt.show()
 
 if __name__ == '__main__':
