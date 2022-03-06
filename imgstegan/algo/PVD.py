@@ -31,11 +31,10 @@ class Pvd():
     
     def _f(self, l, r, d, dp):
         m = dp - d
-        return (l - math.ceil(m/2), r + math.floor(m/2)) if m % 2 == 0 \
+        return (l - math.ceil(m/2), r + math.floor(m/2)) if d % 2 != 0 \
             else (l - math.floor(m/2), r + math.ceil(m/2))
 
     def embed(self, image, message):
-        print(self._f(252, 252, 0, 7))
         img = _to_grayscale(image).astype(np.short)
         h, w = img.shape[:2]
         binary_msg = message_to_binary(message + '\0')
@@ -54,8 +53,6 @@ class Pvd():
                         u = acc + self._range[k] - 1
                         break
                 n = int(math.log2(u - l + 1))
-                if img[i, j] == 251 and img[i, j + 1] == 252:
-                    print(d, l, u)
                 # Range check
                 lu, ru = self._f(img[i, j], img[i, j + 1], d, u if d >= 0 else -u)
                 if lu < 0 or lu > 255 or ru < 0 or ru > 255:
@@ -64,9 +61,7 @@ class Pvd():
                 b = int(binary_msg[:n], 2)
                 binary_msg = binary_msg[n:]
                 dp = l + b if d >= 0 else -(l + b)
-                print(f"embed {n} bits, {b}, d={d}, l={l}, u={u}, dp={dp}, m={dp-d}")
                 nl, nr = self._f(img[i, j], img[i, j + 1], d, dp)
-                print(img[i, j], img[i, j + 1], nl, nr)
                 img[i, j] = nl
                 img[i, j + 1] = nr
     
@@ -81,8 +76,6 @@ class Pvd():
         for i in range(h - 1):
             if completed: break
             for j in range(0, w - 2, 2):
-                if img[i, j] == 252 and img[i, j + 1] == 252:
-                    print("SFDSFDS")
                 if completed: break
                 d = img[i, j + 1] - img[i, j]
                 acc = 0
@@ -93,8 +86,6 @@ class Pvd():
                         l = acc
                         u = acc + self._range[k] - 1
                         break
-                if img[i, j] == 252 and img[i, j + 1] == 252:
-                    print(d, l, u)
 
                 n = int(math.log2(u - l + 1))
                 # Range check
@@ -103,15 +94,12 @@ class Pvd():
                     continue
                 # Extract
                 b = d - l if d >= 0 else -d - l
-                print(f"{img[i,j]}, {img[i,j+1]}")
-                print(b)
                 info = f"{b:b}"
                 if len(info) < n:
                     info = "0" * (n - len(info)) + info
                 binary_msg += info
                 # End of message check
                 rem = len(binary_msg) % 8
-                if len(binary_msg)>=30: return binary_to_string(binary_msg)
                 if binary_msg[-rem-8:-rem] == "00000000":
                     completed = True
                     binary_msg = binary_msg[:-rem-8]
