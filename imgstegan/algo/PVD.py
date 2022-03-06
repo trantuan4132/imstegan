@@ -147,6 +147,7 @@ class AdaptivePvd():
         w, h = img.shape[:2]
         message = message + '\0'
         binary_msg = message_to_binary(message)
+        
         for i in range(0, h - 2, 2):
             if not binary_msg: break
             for j in range(0, w - 3, 3):
@@ -174,6 +175,7 @@ class AdaptivePvd():
         w, h = img.shape[:2]
         binary_msg = ''
         completed = False
+        
         for i in range(0, h - 2, 2):
             if completed: break
             for j in range(0, w - 3, 3):
