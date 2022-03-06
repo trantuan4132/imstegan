@@ -64,5 +64,5 @@ class LSB():
                 binary_message = binary_message[:-len(binary_delimiter)]
                 break
 
-        message = binary_to_string(binary_message)    
+        message = binary_to_message(binary_message)    
         return message

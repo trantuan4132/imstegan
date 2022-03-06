@@ -108,7 +108,8 @@ class Pvd():
 
 class AdaptivePvd():
     """Adaptive PVD on 2x3 blocks described in
-    `"Adaptive PVD Steganography Using Horizontal, Vertical, and Diagonal Edges in Six-Pixel Blocks", K. Raja Sekhar, Gandharba Swain`"""
+    `"Adaptive PVD Steganography Using Horizontal, Vertical, and Diagonal Edges in Six-Pixel Blocks", K. Raja Sekhar, Gandharba Swain`
+    """
     _pos = ((0, 0), (0, 2), (1, 0), (1, 2))
 
     def __init__(self, **kwargs: Any):
