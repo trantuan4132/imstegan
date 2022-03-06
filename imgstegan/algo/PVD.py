@@ -1,9 +1,10 @@
 import math
 import warnings
+from typing import Any
 
 import numpy as np
 
-from ..utils import message_to_binary, binary_to_string, rgb_to_gray
+from ..utils import message_to_binary, binary_to_message, rgb_to_gray
 
 
 __all__ = ["Pvd", "AdaptivePvd"]
@@ -23,7 +24,10 @@ def _to_grayscale(image):
 
 
 class Pvd():
-    def __init__(self, high_capacity=False):
+    """Pixel-value differencing algorithm described in 
+    `"A steganographic method for images by pixel-value differencing", Da-Chun Wu, Wen-Hsiang Tsai`
+    """
+    def __init__(self, high_capacity: bool = False, **kwargs: Any) -> None:
         if high_capacity:
             self._range = (2, 2, 4, 4, 4, 8, 8, 16, 16, 32, 32, 64, 64)
         else:
@@ -33,8 +37,25 @@ class Pvd():
         m = dp - d
         return (l - math.ceil(m/2), r + math.floor(m/2)) if d % 2 != 0 \
             else (l - math.floor(m/2), r + math.ceil(m/2))
+    
+    def _analyze_pair(self, a, b):
+        d = b - a
+        acc = 0
+        for k in range(len(self._range)):
+            if acc + self._range[k] - 1 < abs(d):
+                acc += self._range[k]
+            else:
+                l = acc
+                u = acc + self._range[k] - 1
+                break
+        n = int(math.log2(u - l + 1))
+        # Range check
+        lu, ru = self._f(a, b, d, u if d >= 0 else -u)
+        overflow = (lu < 0 or lu > 255 or ru < 0 or ru > 255)
 
-    def embed(self, image, message):
+        return overflow, l, d, n
+
+    def embed(self, image: np.ndarray, message: str) -> np.ndarray:
         img = _to_grayscale(image).astype(np.short)
         h, w = img.shape[:2]
         binary_msg = message_to_binary(message + '\0')
@@ -43,19 +64,8 @@ class Pvd():
             if not binary_msg: break
             for j in range(0, w - 2, 2):
                 if not binary_msg: break
-                d = img[i, j + 1] - img[i, j]
-                acc = 0
-                for k in range(len(self._range)):
-                    if acc + self._range[k] - 1 < abs(d):
-                        acc += self._range[k]
-                    else:
-                        l = acc
-                        u = acc + self._range[k] - 1
-                        break
-                n = int(math.log2(u - l + 1))
-                # Range check
-                lu, ru = self._f(img[i, j], img[i, j + 1], d, u if d >= 0 else -u)
-                if lu < 0 or lu > 255 or ru < 0 or ru > 255:
+                overflow, l, d, n = self._analyze_pair(img[i, j], img[i, j + 1])
+                if overflow:
                     continue
                 # Embed
                 b = int(binary_msg[:n], 2)
@@ -67,7 +77,7 @@ class Pvd():
     
         return img.astype(np.uint8)
     
-    def extract(self, image):
+    def extract(self, image: np.ndarray) -> str:
         img = image.astype(np.short)
         h, w = img.shape[:2]
         binary_msg = ''
@@ -77,20 +87,8 @@ class Pvd():
             if completed: break
             for j in range(0, w - 2, 2):
                 if completed: break
-                d = img[i, j + 1] - img[i, j]
-                acc = 0
-                for k in range(len(self._range)):
-                    if acc + self._range[k] - 1 < abs(d):
-                        acc += self._range[k]
-                    else:
-                        l = acc
-                        u = acc + self._range[k] - 1
-                        break
-
-                n = int(math.log2(u - l + 1))
-                # Range check
-                lu, ru = self._f(img[i, j], img[i, j + 1], d, u if d >= 0 else -u)
-                if lu < 0 or lu > 255 or ru < 0 or ru > 255:
+                overflow, l, d, n = self._analyze_pair(img[i, j], img[i, j + 1])
+                if overflow:
                     continue
                 # Extract
                 b = d - l if d >= 0 else -d - l
@@ -105,13 +103,15 @@ class Pvd():
                     binary_msg = binary_msg[:-rem-8]
                     break
         
-        return binary_to_string(binary_msg)
+        return binary_to_message(binary_msg)
 
 
 class AdaptivePvd():
+    """Adaptive PVD on 2x3 blocks described in
+    `"Adaptive PVD Steganography Using Horizontal, Vertical, and Diagonal Edges in Six-Pixel Blocks", K. Raja Sekhar, Gandharba Swain`"""
     _pos = ((0, 0), (0, 2), (1, 0), (1, 2))
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any):
         pass
 
     def _analyze_block(self, block):
@@ -141,7 +141,7 @@ class AdaptivePvd():
         return gu, ls, us, ns
 
 
-    def embed(self, image, message):
+    def embed(self, image: np.ndarray, message: str) -> np.ndarray:
         img = _to_grayscale(image).astype(np.short)
         w, h = img.shape[:2]
         message = message + '\0'
@@ -168,7 +168,7 @@ class AdaptivePvd():
 
         return img.astype(np.uint8)
 
-    def extract(self, image):
+    def extract(self, image: np.ndarray) -> str:
         img = image.astype(np.short)
         w, h = img.shape[:2]
         binary_msg = ''
@@ -198,4 +198,4 @@ class AdaptivePvd():
                         binary_msg = binary_msg[:-rem-8]
                         break
 
-        return binary_to_string(binary_msg)
+        return binary_to_message(binary_msg)
