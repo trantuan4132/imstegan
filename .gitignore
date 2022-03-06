@@ -130,5 +130,6 @@ dmypy.json
 
 *.jpg
 *.png
+*.txt
 *.sh
 output*

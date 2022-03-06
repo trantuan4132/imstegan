@@ -23,7 +23,10 @@ python main.py --image_path <image-file> \
     --output_path <output-file>
 ```
 
-**Note:** Output path to save image should use extension with lossless compression (.png) to ensure that no information is lost
+**Note:** 
+
+- If message is contained in a text file, please specify `--text_file <text-file>` argument instead of `--message <text>`
+- Output path to save image should use extension with lossless compression (.png) to ensure that no information is lost
 
 ## Extract message from image
 
@@ -33,3 +36,5 @@ python main.py --image_path <image-file> \
     --key <number> \
     --extract
 ```
+
+**Note:** For the purpose of saving extracted message to file, please specify `--extract_to_file <extract-file>` argument
