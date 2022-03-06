@@ -1,16 +1,15 @@
 import numpy as np
 
-from ..utils import *
+from ..utils import message_to_binary, integer_to_binary, binary_to_message
 
 
 class LSB():
-    def __init__(self, n_lsb=1, delimiter="\\0", key=2022, **kwargs):
+    def __init__(self, n_lsb=1, key=2022, **kwargs):
         self.n_lsb = n_lsb
-        self.delimiter = delimiter
         self.key = key
 
     def embed(self, image, message):
-        message = message + self.delimiter
+        message += '\0'
         binary_message = message_to_binary(message)
         h, w, c = image.shape
         max_bits = h * w * c * self.n_lsb
@@ -39,7 +38,6 @@ class LSB():
         return new_image
 
     def extract(self, image):
-        binary_delimiter = message_to_binary(self.delimiter)
         h, w, c = image.shape
         max_bits = h * w * c * self.n_lsb
 
@@ -60,8 +58,9 @@ class LSB():
             binary_message += integer_to_binary(image[y][x][z])[-t-1]
 
             # Check if reached the delimiter
-            if binary_message[-len(binary_delimiter):] == binary_delimiter:
-                binary_message = binary_message[:-len(binary_delimiter)]
+            rem = len(binary_message) % 8
+            if binary_message[-rem-8:-rem] == "00000000":
+                binary_message = binary_message[:-rem-8]
                 break
 
         message = binary_to_message(binary_message)    
