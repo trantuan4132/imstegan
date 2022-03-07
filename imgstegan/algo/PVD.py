@@ -171,6 +171,9 @@ class AdaptivePvd():
         return img.astype(np.uint8)
 
     def extract(self, image: np.ndarray) -> str:
+        if image.ndim == 3 and image.shape[2] == 1:
+            image = image.squeeze()
+        assert image.ndim == 2, "Image must be grayscale"
         img = image.astype(np.short)
         w, h = img.shape[:2]
         binary_msg = ''

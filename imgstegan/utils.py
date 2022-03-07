@@ -14,5 +14,5 @@ def binary_to_message(binary_message):
     return message
 
 def rgb_to_gray(image):
-    coef = np.array([[[0.299, 0.587, 0.114]]])
+    coef = np.array([0.299, 0.587, 0.114])[:, None]
     return (image@coef).squeeze()
