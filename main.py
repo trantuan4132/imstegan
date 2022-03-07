@@ -2,8 +2,8 @@ import argparse
 from PIL import Image
 import numpy as np
 import matplotlib.pyplot as plt
-
 import imgstegan
+import cv2 
 
 def parse_args():
     parser = argparse.ArgumentParser(description='LSB embedding and extraction')
@@ -20,7 +20,10 @@ def parse_args():
 
 def main():
     args = parse_args()
-    image = np.array(Image.open(args.image_path))
+    if args.algorithm_name=="LSBM":
+        image = cv2.imread(args.image_path,cv2.IMREAD_GRAYSCALE)        
+    else:
+        image = np.array(Image.open(args.image_path))
     message = args.message
     algorithm = getattr(imgstegan, args.algorithm_name)
     kwargs = {
@@ -48,9 +51,13 @@ def main():
     else:
         # Otherwise embed message into image
         image = algorithm(**kwargs).embed(image, message)
-        Image.fromarray(image).save(args.output_path)
-        plt.imshow(image)
-        plt.show()
+        if args.algorithm_name=="LSBM":
+            cv2.imwrite(args.output_path,image)
+        else:
+            Image.fromarray(image).save(args.output_path)
+            plt.imshow(image)
+            plt.show()
+
 
 if __name__ == '__main__':
     main()
