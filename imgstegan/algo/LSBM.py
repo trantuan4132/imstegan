@@ -14,7 +14,7 @@ class LSBM:
         self._key = key
         random.seed(key)
     
-    def _embed_pixel(self, message, inary_pixel, message_index):
+    def _embed_pixel(self, message, binary_pixel, message_index):
         bit = message[message_index]
         pixel = int(binary_pixel, 2)
         if binary_pixel[-1] != bit:
