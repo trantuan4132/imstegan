@@ -5,7 +5,6 @@ from unidecode import unidecode
 class LSBM:
     def __init__(self,key=None,n_lsb=None):
         self.key = key
-        self.delimiter = "-----"
         random.seed(key)
     
     def embed_pixel(self,message, binary_pixel, message_index):
@@ -51,7 +50,7 @@ class LSBM:
         return message, delimiter_present
 
     def embed(self,image,message):
-        message = message+self.delimiter
+        message = message+'\0'
         binary_message = self.message_to_binary(message)
         width = np.size(image, 1)
         height = np.size(image, 0)
@@ -96,7 +95,7 @@ class LSBM:
             binary_pixel = self.integer_to_binary(stego_pixel)
             binary_message += binary_pixel[-1]
 
-        extracted_message, _ = self.binary_to_string(binary_message, self.delimiter)
+        extracted_message, _ = self.binary_to_string(binary_message,'\0')
         return extracted_message
 
 
