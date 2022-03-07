@@ -11,10 +11,10 @@ class LSBM:
         key (int): Random seed for pixel traversal order
     """
     def __init__(self, key=2022):
-        self.key = key
+        self._key = key
         random.seed(key)
     
-    def _embed_pixel(self, message, binary_pixel, message_index):
+    def _embed_pixel(self, message, inary_pixel, message_index):
         bit = message[message_index]
         pixel = int(binary_pixel, 2)
         if binary_pixel[-1] != bit:
@@ -78,7 +78,7 @@ class LSBM:
         stego_image = cover_image
         return stego_image
     
-    def extract(self,image):
+    def extract(self, image):
         binary_message = ""
         width = np.size(image, 1)
         height = np.size(image, 0)
@@ -96,6 +96,9 @@ class LSBM:
         extracted_message, _ = self._binary_to_string(binary_message, '\0')
         return extracted_message
 
+    @property
+    def key(self):
+        return self._key
 
 
     
