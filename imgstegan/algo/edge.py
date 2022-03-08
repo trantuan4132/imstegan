@@ -1,4 +1,3 @@
-import math
 import warnings
 from typing import Any
 
@@ -24,10 +23,10 @@ def _to_grayscale(image):
 
 
 class SobelLSB():
-    """Pixel-value differencing algorithm described in 
-    `"A steganographic method for images by pixel-value differencing", Da-Chun Wu, Wen-Hsiang Tsai`
+    """Edge-based LSB embedding using Sobel kernel, idea described in: 
+    `"Edge-based image steganography", Saiful Islam, Mangat R Modi and Phalguni Gupta`
     """
-    def __init__(self, n_bits: int = 4, sobel_threshold: float = 0.5, **kwargs: Any) -> None:
+    def __init__(self, n_bits: int = 2, sobel_threshold: float = 0.5, **kwargs: Any) -> None:
         self._n_bits = n_bits
         self._threshold = sobel_threshold
         pass
@@ -39,9 +38,9 @@ class SobelLSB():
 
     def embed(self, image: np.ndarray, message: str) -> np.ndarray:
         img = _to_grayscale(image).astype(np.uint8)
-        binary_msg = message_to_binary(message)
-        edge_mask = self._sobel_magnitude(img/255.0)
-        edge_loc = np.where(edge_mask > self._threshold)
+        binary_msg = message_to_binary(message + '\0')
+        edge_mask = self._sobel_magnitude(((img >> (8 - self._n_bits)) << (8 - self._n_bits))/255.)
+        edge_loc = np.where(edge_mask >= self._threshold)
         for x,y in zip(*edge_loc):
             if not binary_msg: break
             b = int(binary_msg[:self._n_bits], 2)
@@ -51,21 +50,19 @@ class SobelLSB():
         return img
     
     def extract(self, image: np.ndarray) -> str:
-        img = image.astype(np.short)
-        h, w = img.shape[:2]
         binary_msg = ''
         completed = False
-
-        for i in range(h - 1):
+        edge_mask = self._sobel_magnitude(((image >> (8 - self._n_bits)) << (8 - self._n_bits))/255.)
+        edge_loc = np.where(edge_mask >= self._threshold)
+        for x,y in zip(*edge_loc):
             if completed: break
-            for j in range(0, w - 2, 2):
-                if completed: break
-                
-                # End of message check
-                rem = len(binary_msg) % 8
-                if binary_msg[-rem-8:-rem] == "00000000":
-                    completed = True
-                    binary_msg = binary_msg[:-rem-8]
-                    break
+            b = image[x, y] & ((1 << self._n_bits) - 1)
+            binary_msg += bin(b)[2:].zfill(self._n_bits)
+            # End of message check
+            rem = len(binary_msg) % 8
+            if binary_msg[-rem-8:-rem] == "00000000":
+                completed = True
+                binary_msg = binary_msg[:-rem-8]
+                break
         
         return binary_to_message(binary_msg)
