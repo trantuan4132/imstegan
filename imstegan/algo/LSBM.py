@@ -99,6 +99,3 @@ class LSBM:
     @property
     def key(self):
         return self._key
-
-
-    
