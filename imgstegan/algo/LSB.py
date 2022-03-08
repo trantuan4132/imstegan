@@ -4,7 +4,7 @@ from ..utils import message_to_binary, integer_to_binary, binary_to_message
 
 
 class LSB():
-    def __init__(self, n_lsb=1, key=2022, delimeter='aihf837y2h0', **kwargs):
+    def __init__(self, n_lsb=1, key=2022, delimeter='\0', **kwargs):
         self.n_lsb = n_lsb
         self.key = key
         self.delim = delimeter
