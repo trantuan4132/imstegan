@@ -4,12 +4,13 @@ from ..utils import message_to_binary, integer_to_binary, binary_to_message
 
 
 class LSB():
-    def __init__(self, n_lsb=1, key=2022, **kwargs):
+    def __init__(self, n_lsb=1, key=2022, delimeter='aihf837y2h0', **kwargs):
         self.n_lsb = n_lsb
         self.key = key
+        self.delim = delimeter
 
     def embed(self, image, message):
-        message += '\0'
+        message += self.delim
         binary_message = message_to_binary(message)
         h, w, c = image.shape
         max_bits = h * w * c * self.n_lsb
@@ -47,6 +48,7 @@ class LSB():
         np.random.shuffle(path)
 
         # Decode all data from the image
+        binary_delim = message_to_binary(self.delim)
         binary_message = ''
         for i in range(len(path)):
             index = path[i]
@@ -59,8 +61,8 @@ class LSB():
 
             # Check if reached the delimiter
             rem = len(binary_message) % 8
-            if binary_message[-rem-8:-rem] == "00000000":
-                binary_message = binary_message[:-rem-8]
+            if binary_message[-rem-len(binary_delim):-rem] == binary_delim:
+                binary_message = binary_message[:-rem-len(binary_delim)]
                 break
 
         message = binary_to_message(binary_message)    
