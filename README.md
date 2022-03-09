@@ -1,4 +1,4 @@
-<img src="doc/fix_crop.png" width="100%">
+<img src="doc/logo.png" width="100%">
 
 ---
 
