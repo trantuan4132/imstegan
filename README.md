@@ -2,11 +2,9 @@
 
 ---
 
-Imstegan is an open source Python package implementing various image steganography techniques, including but not limited to:
-- LSB, LSBM
-- PVD, Adaptive PVD
-- Edge-LSB
-- ...
+*"Steganography is the study and practice of concealing information within objects in such a way that it deceives the viewer as if there is no information hidden within the object. Simply put, it is hiding information in plain sight, such that only the intended recipient would get to see it."*
+
+**Imstegan** is an open source Python package implementing various image steganography techniques, including but not limited to LSB, LSBM, PVD, Adaptive PVD, Edge-LSB, ...
 
 ## Installation
 
