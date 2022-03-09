@@ -1,40 +1,92 @@
-# Steganography
+<img src="doc/logo.png" width="100%">
+
+---
+
+Imstegan is an open source Python package implementing various image steganography techniques, including but not limited to:
+- LSB, LSBM
+- PVD, Adaptive PVD
+- Edge-LSB
+- ...
 
 ## Installation
 
-```
-git clone https://github.com/trantuan4132/Image-Steganography
-cd Image-Steganography
-```
+### Install from PyPI
 
-## Set up environment
-
-```
-pip install -r requirements.txt
+```bash
+pip install imstegan
 ```
 
-## Embed message within image
+### Install the latest version from main branch on GitHub
 
-```
-python main.py --image_path <image-file> \
-    --message <text> \
-    --algorithm_name <algorithm-name>
-    --key <number> \
-    --output_path <output-file>
+```bash
+pip install git+https://github.com/trantuan4132/imstegan.git
 ```
 
-**Note:** 
+## Usage
 
-- If message is contained in a text file, please specify `--text_file <text-file>` argument instead of `--message <text>`
-- Output path to save image should use extension with lossless compression (.png) to ensure that no information is lost
+### As an API
 
-## Extract message from image
+All algorithms can be imported directly from namespace `imstegan`. Any algorithm contains `embed()` and `extract()` methods. For example, to embed a message into an image:
 
+```py
+import cv2
+
+from imstegan import LSB
+
+image = cv2.imread('image.png', cv2.IMREAD_COLOR)[..., ::-1]  # BGR to RGB
+message = "Tea is leaf juice."
+
+# Embed message into image
+steg_image = LSB(n_bits=2, key=1337).embed(image, mesesage)
+
+cv2.imwrite('steg_image.png', steg_image)
 ```
-python main.py --image_path <image-file> \
-    --algorithm_name <algorithm-name>
-    --key <number> \
+
+Conversely, to extract the message from an image, given that you know the relevant information:
+
+```py
+import cv2
+
+from imstegan import LSB
+
+steg_image = cv2.imread('steg_image.png', cv2.IMREAD_COLOR)[..., ::-1]  # BGR to RGB
+
+# Extract message
+message = LSB(n_bits=2, key=1337).extract(steg_image)
+
+print(message)
+```
+
+Some algorithms natively support RGB images, but most of them work on single channel images. We provide utilities to seperate the channels or convert to grayscale so that they can be processed by the algorithms. More details can be found in our [API documentation](doc/API.md).
+
+### As a CLI
+
+We also provide a CLI tool to embed and extract messages from images. For example, to embed a message into an image:
+
+```bash
+python -m imstegan
+    --image_path image.png \
+    --message "Tea is leaf juice" \
+    --algorithm_name LSB \
+    --key 1337 \
+    --output_path steg_image.png \
+```
+
+To extract the message from an image:
+```bash
+python -m imstegan
+    --image_path steg_image.png \
+    --algorithm_name LSB \
+    --key 1337 \
     --extract
 ```
 
-**Note:** For the purpose of saving extracted message to file, please specify `--extract_to_file <extract-file>` argument
+More details can be found in our [CLI documentation](doc/CLI.md).
+
+## Contributing
+
+If you plan to contribute new features, just open an issue and send a PR.
+
+## License
+
+This project is under [MIT License](LICENSE.md).
