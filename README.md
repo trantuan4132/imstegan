@@ -24,7 +24,7 @@ pip install git+https://github.com/trantuan4132/imstegan.git
 
 ### As an API
 
-All algorithms can be imported directly from namespace `imstegan`. Any algorithm contains `embed()` and `extract()` methods. For example, to embed a message into an image:
+All algorithms can be imported directly from namespace `imstegan`. All of them contains 2 important methods: `embed(image, message)` and `extract(image)`. For example, to embed a message into an image:
 
 ```py
 import cv2
