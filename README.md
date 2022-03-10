@@ -35,7 +35,7 @@ image = cv2.imread('image.png', cv2.IMREAD_COLOR)[..., ::-1]  # BGR to RGB
 message = "Tea is leaf juice."
 
 # Embed message into image
-steg_image = LSB(n_bits=2, key=1337).embed(image, mesesage)
+steg_image = LSB(n_lsb=2, key=1337).embed(image, mesesage)
 
 cv2.imwrite('steg_image.png', steg_image)
 ```
@@ -50,7 +50,7 @@ from imstegan import LSB
 steg_image = cv2.imread('steg_image.png', cv2.IMREAD_COLOR)[..., ::-1]  # BGR to RGB
 
 # Extract message
-message = LSB(n_bits=2, key=1337).extract(steg_image)
+message = LSB(n_lsb=2, key=1337).extract(steg_image)
 
 print(message)
 ```
