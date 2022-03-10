@@ -7,7 +7,7 @@ import numpy as np
 from ..utils import message_to_binary, binary_to_message, rgb_to_gray
 
 
-__all__ = ["Pvd", "AdaptivePvd"]
+__all__ = ["PVD", "AdaptivePVD"]
 
 
 def _to_grayscale(image):
@@ -23,7 +23,7 @@ def _to_grayscale(image):
     return img
 
 
-class Pvd():
+class PVD():
     """Pixel-value differencing algorithm described in 
     `"A steganographic method for images by pixel-value differencing", Da-Chun Wu, Wen-Hsiang Tsai`
     """
@@ -106,7 +106,7 @@ class Pvd():
         return binary_to_message(binary_msg)
 
 
-class AdaptivePvd():
+class AdaptivePVD():
     """Adaptive PVD on 2x3 blocks described in
     `"Adaptive PVD Steganography Using Horizontal, Vertical, and Diagonal Edges in Six-Pixel Blocks", K. Raja Sekhar, Gandharba Swain`
     """

@@ -6,7 +6,7 @@ import numpy as np
 from ..utils import message_to_binary, binary_to_message, rgb_to_gray, dct8x8, idct8x8
 
 
-__all__ = ["DctScale"]
+__all__ = ["DCTScale"]
 
 def _to_grayscale(image):
     if image.ndim > 2:
@@ -21,7 +21,7 @@ def _to_grayscale(image):
     return img
 
 
-class DctScale():
+class DCTScale():
     """A naive steganographic method for images using Discrete Cosine Transform.
     This method embeds a message in an image by changing quantized DCT coefficients.
     This is currently broken if encounter near white or black pixels."""
