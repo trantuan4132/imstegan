@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
    name='imstegan',
@@ -7,6 +7,6 @@ setup(
    author='Duc To, Tuan Tran and Viet Nguyen',
    author_email='',
    url='',
-   packages=['imstegan'],
+   packages=find_packages(),
    install_requires=['Pillow', 'numpy', 'numba'],
 )
