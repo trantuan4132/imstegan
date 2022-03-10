@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
    name='imstegan',
-   version='0.0.1',
+   version='0.0.2',
    description='An awesome image steganography library',
    author='Duc To, Tuan Tran and Viet Nguyen',
    author_email='',
